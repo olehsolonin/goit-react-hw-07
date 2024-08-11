@@ -19,25 +19,3 @@ export const { setFilter } = slice.actions;
 
 export default slice.reducer;
 
-
-// export const setFilter = (filterValue) => {
-// 	// console.log(filterValue);
-
-// 	return {
-// 		type: 'filters/setFilter',
-// 		payload: filterValue
-// 	}
-// };
-
-
-// export const filterReducer = (state = { name: "" }, action) => {
-// 	switch (action.type) {
-
-// 		case 'filters/setFilter':
-// 			return {
-// 				name: action.payload
-// 			}
-// 		default:
-// 			return state;
-// 	}
-// };

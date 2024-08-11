@@ -1,99 +1,69 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchContacts } from '../redux/contactsOps'
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchContacts, addContact, deleteContact } from './contactsOps';
+import { createSelector } from '@reduxjs/toolkit';
+import { selectFilter } from './filtersSlice';
 
-const slice = createSlice({
+const contactsSlice = createSlice({
 	name: 'contacts',
 	initialState: {
 		items: [],
 		loading: false,
-		error: false
+		error: null,
 	},
-
-	// reducers: {
-	// 	deleteContact(state, action) {
-	// 		state.items = state.items.filter(item => item.id !== action.payload);
-	// 	},
-	// 	addContact(state, action) {
-	// 		state.items.push(action.payload);
-	// 	}
-	// }
-	reducers: {},
-	extraReducers: builder => {
-		builder.addCase(fetchContacts.pending, (state) => {
-			state.loading = true;
-			state.error = false;
-		})
-			.addCase(fetchContacts.fulfilled, (state, action) => {
-				state.items = action.payload;
-				state.loading = false;
-			}).addCase(fetchContacts.rejected, (state) => {
-				state.loading = false;
-				state.error = true;
-
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchContacts.pending, (state) => {
+				state.loading = true;
+				state.error = null;
 			})
+			.addCase(fetchContacts.fulfilled, (state, action) => {
+				state.loading = false;
+				state.items = action.payload;
+			})
+			.addCase(fetchContacts.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(addContact.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(addContact.fulfilled, (state, action) => {
+				state.loading = false;
+				state.items.push(action.payload);
+			})
+			.addCase(addContact.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			})
+			.addCase(deleteContact.pending, (state) => {
+				state.loading = true;
+				state.error = null;
+			})
+			.addCase(deleteContact.fulfilled, (state, action) => {
+				state.loading = false;
+				state.items = state.items.filter(item => item.id !== action.payload);
+			})
+			.addCase(deleteContact.rejected, (state, action) => {
+				state.loading = false;
+				state.error = action.payload;
+			});
 	},
-
-
 });
 
-export const selectContacts = state => state.contacts.items;
-export const selectLoading = state => state.contacts.loading;
-export const selectError = state => state.contacts.error;
-console.log(slice);
+export const selectContacts = (state) => state.contacts.items;
+export const selectLoading = (state) => state.contacts.loading;
+export const selectError = (state) => state.contacts.error;
 
-export const { deleteContact, addContact } = slice.actions;
+export const selectFilteredContacts = createSelector(
+	[selectContacts, selectFilter],
+	(contacts, filter) => contacts.filter(contact =>
+		contact.name.toLowerCase().includes(filter.toLowerCase())
+	)
+);
 
-export default slice.reducer;
+export default contactsSlice.reducer;
 
-// console.log(slice);
-
-// export const deleteContact = contactId => {
-// 	return {
-// 		type: 'contacts/deleteContact',
-// 		payload: contactId,
-// 	};
-// };
-
-// export const addContact = newContact => {
-// 	console.log(newContact);
-// 	const { id, name, number } = newContact
-
-// 	return {
-// 		type: 'contacts/addContact',
-// 		payload: {
-// 			id: id,
-// 			name: name,
-// 			number: number
-// 		}
-// 	};
-// };
-
-
-// export const contactsReducer = (state = {
-// 	items: [{ id: 'id-1', name: 'Billy Herrington', number: '459-12-56' },
-// 	{ id: 'id-2', name: 'Ryan Gosling', number: '443-89-12' },
-// 	{ id: 'id-3', name: 'Ricardo Milos', number: '645-17-79' },
-// 	{ id: 'id-4', name: 'Antonio Banderas', number: '227-91-26' },]
-// }, action) => {
-// 	switch (action.type) {
-// 		case "contacts/deleteContact":
-// 			return {
-// items: state.items.filter(item => {
-// 	return (item.id !== action.payload)
-// }),
-// 			};
-
-// 		case "contacts/addContact":
-// 			return {
-// items: [...state.items, action.payload]
-// 			};
-
-
-
-// 		default:
-// 			return state;
-// 	}
-// };
 
 
 
