@@ -1,22 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { fetchContacts } from '../redux/contactsOps'
 
 const slice = createSlice({
 	name: 'contacts',
 	initialState: {
-		items: [{ id: 'id-1', name: 'Billy Herrington', number: '459-12-56' },
-		{ id: 'id-2', name: 'Ryan Gosling', number: '443-89-12' },
-		{ id: 'id-3', name: 'Ricardo Milos', number: '645-17-79' },
-		{ id: 'id-4', name: 'Antonio Banderas', number: '227-91-26' },]
+		items: [],
+		loading: false,
+		error: null
 	},
 
-	reducers: {
-		deleteContact(state, action) {
-			state.items = state.items.filter(item => item.id !== action.payload);
-		},
-		addContact(state, action) {
-			state.items.push(action.payload);
-		}
-	}
+	// reducers: {
+	// 	deleteContact(state, action) {
+	// 		state.items = state.items.filter(item => item.id !== action.payload);
+	// 	},
+	// 	addContact(state, action) {
+	// 		state.items.push(action.payload);
+	// 	}
+	// }
+	reducers: {},
+	extraReducers: builder => {
+		builder.addCase(fetchContacts.pending, (state) => {
+			state.loading = true;
+		})
+	},
+
 
 });
 
